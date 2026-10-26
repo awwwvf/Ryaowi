@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>유솔과의 대화 시작하기</title>
+<style>
+:root{--bg:#fbf4e6;--card:#fffaf0;--her:#fffdf7;--me:#e0b97d;--meText:#3e2b15;--text:#4b3622;--sub:#9b8466;--line:#ecdcc0;--accent:#c28a45;--btn:#fbefd8;--av:#ecd3a5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a2218;--card:#352b1f;--her:#43372a;--me:#c9a06a;--meText:#2a1c0c;--text:#f3e7d2;--sub:#bfa982;--line:#53432f;--accent:#d9a860;--btn:#43372a;--av:#6a5638}}
+:root[data-theme="dark"]{--bg:#2a2218;--card:#352b1f;--her:#43372a;--me:#c9a06a;--meText:#2a1c0c;--text:#f3e7d2;--sub:#bfa982;--line:#53432f;--accent:#d9a860;--btn:#43372a;--av:#6a5638}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;display:flex;justify-content:center}
+#app{position:relative;width:100%;max-width:440px;height:100%;display:flex;flex-direction:column;background:var(--card);overflow:hidden}
+header{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.av{width:40px;height:40px;border-radius:50%;background:var(--av);display:grid;place-items:center;font-size:23px;flex:none}
+.av.big{width:84px;height:84px;font-size:46px}
+.who{flex:1;min-width:0}
+.who b{display:block;font-size:16px}
+.who span{font-size:12px;color:var(--sub)}
+.gauge{display:flex;align-items:center;gap:6px;width:112px}
+.heart{color:var(--accent);font-size:16px;line-height:1;display:inline-block}
+.heart.up{animation:beat .6s}
+.heart.down{animation:shake .5s;color:var(--sub)}
+@keyframes beat{40%{transform:scale(1.5)}}
+@keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.bar{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .7s}
+#log{flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:4px;background:var(--bg)}
+.row{display:flex;gap:8px;align-items:flex-start}
+.row.me{justify-content:flex-end}
+.row.first{margin-top:8px}
+.sav{width:32px;height:32px;border-radius:50%;background:var(--av);display:grid;place-items:center;font-size:18px;flex:none}
+.sav.sp{background:none}
+.col{display:flex;flex-direction:column;gap:3px;max-width:78%}
+.nm{font-size:12px;color:var(--sub)}
+.m{padding:9px 13px;border-radius:16px;line-height:1.5;font-size:15px;word-break:keep-all;white-space:pre-wrap;width:fit-content}
+.m.her{background:var(--her);border:1px solid var(--line)}
+.m.me{background:var(--me);color:var(--meText);max-width:78%}
+.typing{display:flex;gap:4px;padding:13px 15px;background:var(--her);border:1px solid var(--line);border-radius:16px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--sub);animation:b 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+.dv{align-self:stretch;display:flex;align-items:center;gap:10px;margin:20px 4px 10px;color:var(--sub);font-size:12px}
+.dv::before,.dv::after{content:"";flex:1;height:1px;background:currentColor;opacity:.4}
+.dv:empty{gap:0}
+#log{transition:filter 4s,opacity 4s}
+#log.dim{filter:blur(7px);opacity:.35}
+.m.pic{text-align:center;padding:12px 18px}
+.pe{font-size:56px;line-height:1.2}
+.m.pic div:last-child{font-size:12px;color:var(--sub)}
+.m.gift{border:1.5px dashed var(--meText)}
+.m.big{font-size:46px;background:none;border:0;padding:0}
+.m.del{font-style:italic;opacity:.6}
+.gauge{position:relative;cursor:pointer}
+.gn{position:absolute;top:calc(100% + 8px);right:0;z-index:3;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 12px;font-size:13px;font-weight:700;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+.gn.on{opacity:1}
+.ov{z-index:4}
+.ntf{position:absolute;top:8px;left:8px;right:8px;display:flex;flex-direction:column;gap:6px;z-index:5;pointer-events:none}
+.nt{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.2);animation:drop .4s}
+.nt b{font-size:13px}
+.nt p{margin:2px 0 0;font-size:14px}
+@keyframes drop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+.sys{align-self:center;margin:14px 0 6px;padding:7px 14px;border-radius:14px;background:var(--line);color:var(--sub);font-size:13px;text-align:center}
+#choices{padding:10px 14px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);background:var(--card)}
+#choices:empty{display:none}
+#choices button,.btn{font:inherit;font-size:14px;text-align:left;padding:11px 14px;border-radius:14px;border:1.5px solid var(--accent);background:var(--btn);color:var(--text);cursor:pointer;line-height:1.4}
+#choices button:hover,#choices button:focus-visible,.btn:hover,.btn:focus-visible{background:var(--me);color:var(--meText);outline:none}
+.ibar{display:flex;gap:8px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);background:var(--card)}
+.ibtxt,.ibar input{flex:1;min-width:0;min-height:40px;padding:10px 14px;border-radius:20px;background:var(--bg);border:1px solid var(--line);font:inherit;font-size:15px;line-height:1.4;color:var(--text);word-break:keep-all}
+.ph{color:var(--sub)}
+.ibar.off .ibtxt{opacity:.75;text-align:center}
+.send{width:40px;height:40px;border-radius:50%;border:0;background:var(--accent);color:#fff;font-size:18px;flex:none;display:grid;place-items:center}
+button.send{cursor:pointer}
+.ibar.off .send{opacity:.4}
+.intro{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--bg);padding:24px;text-align:center}
+.intro b{font-size:20px}
+.intro>span{font-size:13px;color:var(--sub)}
+.intro .sys{margin-top:16px}
+.title{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px 28px;background:var(--bg);text-align:center}
+.title h1{margin:0;font-size:24px;line-height:1.35}
+.title p{margin:0;font-size:14px;color:var(--sub)}
+.title input{width:100%;font:inherit;font-size:16px;padding:12px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);color:var(--text);text-align:center}
+.title .btn{width:100%}
+.spd{margin-left:8px;flex:none;font:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:14px;border:1.5px solid var(--accent);background:var(--btn);color:var(--text);cursor:pointer}
+.spd:hover,.spd:focus-visible{background:var(--me);color:var(--meText);outline:none}
+.end{text-align:center;padding:10px 14px 18px}
+.end h2{margin:0 0 12px;font-size:18px}
+.ov{position:absolute;inset:0;background:rgba(40,28,12,.45);display:grid;place-items:center;animation:fade .6s}
+.ov div{background:var(--card);border-radius:20px;padding:28px 24px;text-align:center;width:min(300px,84%);display:flex;flex-direction:column;gap:12px}
+.ov h2{margin:0;font-size:19px;line-height:1.4}
+.ov p{margin:0;font-size:13px;color:var(--sub)}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.typing i,.heart,.ov{animation:none!important}.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// 시나리오. l: 대사 배열(">"로 시작하면 내 말, "|"는 짧게 멈춤, "||"는 3초 멈춤, {n}은 내 이름)
+// c: 선택지(t 문구, d 호감도, r 유솔의 반응, n 다음 장면). 다음이 "E:이름"이면 그 엔딩으로 감
+const W=["그래보여요?",">약간...","아쉽네요. 땡!"];
+const S={
+s1:{l:[">저기, 안녕하세요.","누구세요?",">추천 연락처에 떠서 연락드렸어요.","어... 네ㅎㅎ"],n:"s2"},
+s2:{l:[],c:[
+ {t:"뭐해요?",d:1,r:["아... 저 놀고있었어요."],n:"s3a"},
+ {t:"이름이 유솔이에요?",d:1,r:["네, 성이 유, 이름이 솔.","원래 이름 써놔야 하는 거 아니에요? {n}님은 이름이??"],n:"s3b"},
+ {t:"친구해요",d:2,r:["친구요?","저랑요??","저희 인터넷에서 처음 본 사이인데..."],n:"s3c"}]},
+s3a:{l:[],c:[
+ {t:"뭐하고 놀았는데요?",d:0,r:["그냥 휴대폰 보고?","뭐라고 할만한 일은 없는데..."],n:"s4"},
+ {t:"아... 네.",d:-1,r:[],n:"E:fade"}]},
+s3b:{l:[],c:[
+ {t:"이름이에요",d:2,r:["그럼 이제 {n}님으로 부를게요.","{n}님.","왜 대답 안해줘요?!","|","헤헤"],n:"s4"},
+ {t:"아니에요",d:1,r:["제 이름은 다 알면서, 안알려주시면 안돼죠!","누가 채팅으로 이름도 안쓰구 그래요.","거짓말쟁이네 ㅡㅡ"],n:"s4"}]},
+s3c:{l:[],c:[
+ {t:"인터넷이니까 더 편하게 친구 만드는 거죠.",d:1,r:["어....","그런가?","친구할까요?"],n:"s4"},
+ {t:"그럼 친구 하지 말죠.",d:0,r:["뭐예요? 먼저 연락했다가 이러시는건 좀... 그렇네요.","연락하지 말아주세요."],n:"E:block"},
+ {t:"ㅠㅠ",d:2,r:["헉","울지마세요","저희 친구해요.","그니까 울지말구...."],n:"s4"}]},
+s4:{div:true,wait:3000,l:["제가 생각해봤는데...","{n}님만 저 알고있는거 아니에요?","이건 불공평해요!"],c:[
+ {t:"자기소개라도 할까요?",d:2,r:["좋아요!","저는 유솔이구요, 20살이고... 또... 대학생이에요."],n:"s4a"},
+ {t:"저도 유솔님에 대해서 아는거 별로 없는데.",d:0,r:["그렇긴 한데... 그래도 이름이라도 아시잖아요!"],n:"s4b"},
+ {t:"모르는게 더 재밌지 않나?",d:1,r:["어...","||","그런가...?","그래도 모르는 사이면 좀 그렇지 않아요?"],n:"s4c"}]},
+s4a:{l:[],c:[
+ {t:"잘 들었어요.",d:1,r:["말 안해주시는거예요??","속았다..."],n:"E:score"},
+ {t:"스무살이구나.",d:0,r:["몇살이에요?"],n:"s4a2"}]},
+s4a2:{l:[],c:[
+ {t:"연상",d:2,r:["그렇구나~","왠지 그럴 것 같았어요. ㅎㅎ"],n:"E:score"},
+ {t:"연하",d:-5,r:["연하면 미성년자 아니에요?","미성년자는 좀... 연락하면 그런 기분이..."],n:"E:score"},
+ {t:"동갑",d:3,r:["동갑??","그럼 반말 써도 되는거 아니에요?","{n}!","|","농담이에요ㅋㅋ"],n:"E:score"}]},
+s4b:{l:[],c:[
+ {t:"유솔님도 제 이름 알잖아요. {n}.",d:0,r:["그거 진짜 이름 맞아요??","🤨"],n:"E:score"},
+ {t:"이름 말고 모름.",d:2,r:["그렇긴 한데...","쌤쌤할까요?","ㅋㅋ"],n:"E:score"}]},
+s4c:{l:[],c:[
+ {t:"우리가 모르는 사이에요?",m:"우리가 모르는 사이에요? 속상 ㅠㅠ",d:1,r:["~아","~아니","아는 사이죠.","속상해하지 마세요... 우리는 친구!"],n:"E:score"},
+ {t:"역시 좀 그러신거죠?",d:0,r:[],n:"E:confirm"}]},
+s5:{div:true,l:[">뭐해요?","취미생활 중이에요.",">그게 뭔데요?","베이킹이요.","저 베이킹 좀 좋아하거든요.",">쿠키 만들고?","쿠키도 만들고... 케이크도 만들고"],c:[
+ {t:"저도 만들어주세요",d:0,r:["디저트 좋아하세요?"],n:"s5a"},
+ {t:"어떤거 더 만들수 있어요?",d:2,r:["어...","크림 들어가고 하는건 만들 줄 아는데.","그렇게 물어보니까 생각이 안나요.","ㅎㅅㅎ..."],n:"s6"},
+ {t:"요리도 잘해요?",d:1,r:["요리요? 다음에 만들어드릴게요.","토할 정도는 아닐거예요","|","아마도?",">??"],n:"s6"}]},
+s5a:{l:[],c:[
+ {t:"네",d:0,r:["좋아하는거 말해주세요.","그거 만들어드릴게요 ㅎㅎ"],n:"s5b"},
+ {t:"아니요",d:0,r:["그럼 왜 만들어달라구 해요...ㅡㅡ"],n:"s5c"}]},
+s5c:{l:[],f:{r:["헐","|","그러면 만들어드릴게요","실망하지않기!!"],d:2},n:"s6"},
+s5b:{l:[],f:{test:"케이크|케익|쿠키|마카롱|마카룬|타르트|푸딩|빵|크로와상|크루아상|베이글|도넛|도너츠|와플|크로플|크레페|츄러스|슈크림|에클레어|카스테라|스콘|머핀|브라우니|티라미수|파운드|까눌레|휘낭시에|마들렌|다쿠아즈|비스킷|과자|초콜릿|초콜렛|초코|캔디|사탕|젤리|마시멜로|아이스크림|젤라또|빙수|요거트|요구르트|판나코타|무스|파이|찹쌀떡|꿀떡|인절미|모찌|호떡|호두과자|약과|한과|강정|양갱|크림|캐러멜|카라멜|프레첼|오레오|파르페|소르베|떡",r:["그렇구낭~","저도 그거 좋아해요!"],d:3,br:["그거 디저트 맞아요?"],bd:-2},n:"s6"},
+s6:{wait:2500,l:["그러면 {n}님은 취미가 뭐예요?"],f:{rand:[["음","어려워보인다"],["신기해요"],["멋지다!"],["우와","다음에 저 알려주세요"],["저도 그거 좋아해요","ㅎㅎ"]]},n:"s7"},
+s7:{div:true,l:["[사진]딸기 조각케이크","짜잔",">우와.","맛있겠죠?!","짱이죠??",">ㅋㅋ 짱"],d:3,n:"s8"},
+s8:{div:true,l:["머해요","왜 요즘 연락 안해요","ㅡㅡ"],c:[
+ {t:"바빴어요",d:2,r:["그래요? 무슨 일 있는 건 아니죠?","전에는 먼저 연락도 했으면서",">이제 연락 잘 할게요.","별일 없으면 됐어요","걱정했거든요"],n:"s9"},
+ {t:"지금 대답했는데 용서해줘요",d:4,r:["ㅋㅋ","화 안났어요","그냥 먼일있나 해서...","|","용서!"],n:"s9"},
+ {t:"(답장하지 않는다)",x:1,d:0,r:[],n:"s81"}]},
+s81:{l:["=","저기요?","똑똑~","||","{n}님??","어디갓어요","=","이제 안오게요?","=","먼저 친구하자고 했으면서 ㅡㅡ","=","별일 없죠?","=","이거 보면 연락해줘요.","=","이제 안올거죠?","그럴거같아서...","그래도 {n}님이랑 얘기하는거 재밌었어요."],n:"E:far"},
+s9:{div:true,l:[">유솔님은 형제자매 있나?","오랜만에 질문^ㅁ^!","어때보여요?"],c:[
+ {t:"언니?",d:1,r:W,n:"s11"},{t:"오빠?",d:1,r:W,n:"s11"},{t:"동생?",d:1,r:W,n:"s11"},
+ {t:"외동?",d:3,r:["오??","어떻게 알았지?",">맞췄어요?","정답 ㅎ.ㅎ",">뭔가 그래보였어요","저한테 관심이 많네요?","히히"],n:"s11"}]},
+s10:{div:true,l:["{n}님","처음엔 {n}님이 이상한 분인줄 알았는데...",">헐~","아잇, 마저 들어봐요","생각보다 재밌는 분이시고 좋은 사람이신 것 같아서 받아주길 잘한 것 같아요. ㅎㅎ","앞으로도 우리 좋은 친구 해요!",">그래요. ㅋㅋ",">우리 이제 베프"],n:"@r"},
+s11:{div:true,l:["사장님, 저 랴오위입니다! 오늘 몸 상태가 갑자기 안좋아져서 출근이 어려울 것 같습니다... 갑작스럽게 연락드려서 죄송합니다 ㅠㅠ!"],c:[
+ {t:"(읽고 씹는다)",x:1,d:-3,r:["||","사장님?","헉","{n}님이었구나","그런데 왜 안알려주세요?ㅠㅠ"],n:"s12"},
+ {t:"랴오위?",d:2,r:["네?","아!!!","잘못보냈어요"],n:"s11a"},
+ {t:"잘못 보낸 것 같은데...",d:1,r:["사장님이 아니었구나","죄송해요 {n}님~~","실수...ㅎㅎ"],n:"s11b"}]},
+s11a:{l:[">이름 유솔 아니에요?","맞아요",">랴오위는 뭐예요?","알바하는곳에서 쓰는 가명인데...","부끄럽다"],d:1,n:"s12"},
+s11b:{l:[">아파요?","아","감기기운이 조금...",">따뜻한거 먹고 푹 쉬어요. 건강 조심","걱정 감사해요!!","{n}님두 건강 조심!"],d:3,n:"s12"},
+s12:{div:true,l:[],c:[
+ {t:"뭐해요?",d:0,r:["|",">요즘 알바한다더니",">답장 보낼 시간도 없어요?"],n:"s12a"},
+ {t:"(연락을 보내지 않는다)",x:1,d:0,r:[],n:"s13"}]},
+s12a:{div:true,l:["헉","요즘 너무 바빠서","아... 너무 늦었죠. 기다렸어요?"],d:2,c:[
+ {t:"아뇨",d:1,r:["헐~","ㅡㅡ","그래도 저는 연락 와서 좋았어요."],n:"s13"},
+ {t:"기다렸어요.",d:3,r:["그래서 얼른 왔어요","저랑 연락하는거 역시 좋죠?!","흐흐"],n:"s13"}]},
+s13:{div:true,l:[">랴오위","||","네!","아","{n}님이시네... 장난 뭐예요!!",">ㅋㅋㅋ"],n:"s15"},
+s14:{div:true,l:[],c:[
+ {t:"궁금한거 물어보기",x:1,d:0,r:[],n:"s14a"},
+ {t:"물어보지 않기",x:1,d:0,r:[],n:"@r"}]},
+s14a:{l:[">유솔님 저 궁금한거 있는데",">좀 그럴수도 있긴 해요.","||",">혹시 저희 다음에","-del",">늦은 시간에 죄송해요. 잘 자요.","=","뭐예요?","뭐 보냈던거지?!",">비밀이에요",">ㅎㅎ"],n:"@r"},
+s15:{div:true,l:["{n}님은 어디 살아요?"],f:{r:["그렇구나! 다음에 볼 수 있으면 좋을텐데.","저희 언젠가 보겠죠?"],d:2},n:"s16"},
+s16:{div:true,l:[],c:[
+ {t:"날씨 좋네요",d:2,r:["날씨? 그런가...","제 지역은 비와요~ㅠㅠ","{n}님 지역은 쨍쨍해서 좋겠다."],n:"@r"},
+ {t:"비오네요",d:1,r:["날씨 안좋네요...","밖에 나가려고 했는데 망했다"],n:"s16a"}]},
+s16a:{l:[">나가는거 좋아해요?","저 산책이 취미인데 ㅎㅎ",">산책도??",">멋있다. 완전 호감.","뭐야","전에는 호감 아니었어요?",">더 호감 ㅎㅎ"],d:3,n:"@r"},
+s17:{div:true,l:["저기 {n}님.","요즘 좀 바빠서, 제가 연락을 자주 못드릴 것 같아요.","||","죄송해요ㅠㅠ 다음에 얘기 많이 해요.",">어쩔 수 없죠.",">일 다 끝나면 연락해요."],n:"s171"},
+s171:{div:true,l:[],c:[{t:"연락한다",k:"c",m:"날이 좀 쌀쌀한 것 같기도 하고.",d:0,r:[">건강 조심하세요."],n:"s172"},{t:"연락하지 않는다",k:"n",x:1,d:0,r:[],n:"s172"}]},
+s172:{div:true,l:[],c:[{t:"연락한다",k:"c",m:"뭐해요?",d:0,r:[">전 지금 산책중"],n:"s173"},{t:"연락하지 않는다",k:"n",x:1,d:0,r:[],n:"s173"}]},
+s173:{div:true,l:[],c:[{t:"연락한다",k:"c",m:"영화 봤는데 되게 재미 없더라구요.",d:0,r:[">이 영화는 보지 마세요.ㅋㅋ"],n:"@f"},{t:"연락하지 않는다",k:"n",x:1,d:0,r:[],n:"@f"}]},
+s174:{div:true,l:[],c:[{t:"연락한다",m:"언제 오실지도 모르겠네요.",d:0,r:[">제가 불편해서 피하는건 아니죠?"],n:"E:del2"},{t:"연락하지 않는다",x:1,d:0,r:[],n:"E:del2"}]},
+s175:{div:true,l:[],c:[{t:"연락한다",m:"언제와요ㅠㅠ",d:0,r:[">심심해요","||","|","기다렸어요?","헐...","왜이렇게 많이 보내셨지?!","저 많이 보고싶으셨구나.",">당근이죠",">오랫동안 사라져있었잖아요.","예전에는 제가 {n}님 기다렸는데 지금은 반대네요ㅎㅅㅎ","뭔가 새롭다",">그랬었나",">그건 기억 안나는데..."],n:"E:end"},{t:"연락하지 않는다",x:1,d:0,r:["|","{n}님","{n}님 차단했어요?","나 차단 안했죠?? 그죠?!","{n}님한테 연락하려고 했는데, 여러가지로 일이 겹쳐서... ㅠㅠ",">헐",">너무 늦었는데",">다행ㅎㅎ"],n:"E:end"}]}
+};
+// 엔딩. 점수 엔딩(score)은 위에서부터 min 이상인 첫 항목이 나옴
+const E={
+block:{no:"엔딩 1",sys:"유솔에게 차단당했습니다."},
+del:{no:"엔딩 2",sys:"유솔님이 친구삭제 되셨습니다."},
+far:{no:"엔딩 3",sys:"유솔과 멀어졌습니다.",sub:"좋은 친구를 잃어서 속상해 보이네요. 그래도 당신을 곧 잊을 것입니다."},
+del2:{no:"엔딩 4",sys:"유솔님이 친구삭제 되셨습니다."},
+fade:{no:"엔딩 5",sys:"이후 대화가 이어지지 않았습니다."},
+score:[{min:30,no:"엔딩 8",sys:"유솔과 베스트 프렌드가 되었습니다."},{min:15,no:"엔딩 7",sys:"유솔과 좋은 친구가 되었습니다."},{min:0,no:"엔딩 6",sys:"유솔과의 대화가 끝났습니다."}]
+};
+const START=0,MAX=70; // 시작 호감도와 게이지 만점(숫자는 화면에 보이지 않음)
+let aff=START,name="",last=null,app=document.getElementById("app");
+let SPD=1,curU="",drawn=0;
+const FN={c:0,n:0},U={s5:"s5",s5a:"s5",s5b:"s5",s5c:"s5",s6:"s5",s7:"s5",s8:"s8",s81:"s8",s9:"s9",s11:"s11",s11a:"s11",s11b:"s11",s12:"s12",s12a:"s12",s13:"s13",s15:"s15",s16:"s16",s16a:"s16"},UN=[{id:"s5"},{id:"s8",after:3},{id:"s9"},{id:"s11"},{id:"s12",req:"s11"},{id:"s13",req:"s11"},{id:"s15"},{id:"s16"}],EV=[{id:"s10",min:14},{id:"s14",min:25},{id:"s17",min:37}]; // 재생 속도(1배속, 2배속). 모든 대기 시간이 이 값만큼 빨라짐
+const sleep=ms=>new Promise(r=>{let left=ms;const t=setInterval(()=>{left-=10*SPD;if(left<=0){clearInterval(t);r()}},10)});
+const f=t=>t.replace(/\{n\}/g,name);
+const $=id=>document.getElementById(id);
+function start(){
+ app.innerHTML='<div class="title"><div class="av big">🐰</div><h1>유솔과의 대화 시작하기</h1><p>추천 연락에 올라온 유솔에게 말을 걸어볼까요?</p><input id="nm" maxlength="8" placeholder="내 이름을 입력하세요" autocomplete="off"><button class="btn" id="go" style="text-align:center">대화 시작하기</button></div>';
+ const go=()=>{name=$("nm").value.trim()||"나";chat()};
+ $("go").onclick=go;
+ $("nm").onkeydown=e=>{if(e.key==="Enter")go()};
+}
+function chat(){
+ aff=START;last=null;EV.forEach(e=>e.done=false);UN.forEach(u=>u.done=false);drawn=0;curU="";FN.c=0;FN.n=0;
+ app.innerHTML='<header><div class="av">🐰</div><div class="who"><b>유솔</b><span>추천 연락</span></div><div class="gauge" id="gau" role="button" tabindex="0" aria-label="호감도 보기"><span class="heart" id="hrt">♥</span><div class="bar"><i id="fill"></i></div><span class="gn" id="gn"></span></div><button class="spd" id="spd" aria-label="재생 속도">'+SPD+'x</button></header><div id="log" aria-live="polite"></div><div id="choices"></div><div class="ibar" id="ibar"><div class="ibtxt ph" id="ib">메시지 입력</div><div class="send">↑</div></div>';
+ $("spd").onclick=toggleSpd;$("gau").onclick=showNum;$("gau").onkeydown=e=>{if(e.key==="Enter")showNum()};gauge(0);sleep(800+Math.random()*1000).then(()=>play("s1"));
+}
+let gt;
+function showNum(){const g=$("gn");g.textContent=aff+"/"+MAX;g.classList.add("on");clearTimeout(gt);gt=setTimeout(()=>g.classList.remove("on"),2500)}
+function toggleSpd(){SPD=SPD===1?2:1;$("spd").textContent=SPD+"x"}
+function gauge(dir){
+ $("fill").style.width=Math.max(0,Math.min(100,aff/MAX*100))+"%";
+ const gn=$("gn");if(gn.classList.contains("on"))gn.textContent=aff+"/"+MAX;
+ const h=$("hrt");h.className="heart";
+ if(dir){void h.offsetWidth;h.className="heart "+(dir>0?"up":"down")}
+}
+function add(who,t){
+ const lg=$("log"),first=last!==who;last=who;
+ const row=document.createElement("div");row.className="row "+who+(first?" first":"");
+ const b=document.createElement("div");b.className="m "+who;b.textContent=t;
+ if(t.startsWith("[사진]")){b.className+=" pic";b.textContent="";const e=document.createElement("div");e.className="pe";e.textContent="🍰";const c=document.createElement("div");c.textContent=t.slice(4).trim();b.append(e,c)}
+ else if(t.startsWith("[기프티콘]"))b.className+=" gift";
+ else if(/^\p{Extended_Pictographic}+$/u.test(t))b.className+=" big";
+ if(who==="her"){
+  const a=document.createElement("div");a.className="sav"+(first?"":" sp");a.textContent=first?"🐰":"";
+  const col=document.createElement("div");col.className="col";
+  if(first){const nm=document.createElement("div");nm.className="nm";nm.textContent="유솔";col.appendChild(nm)}
+  col.appendChild(b);row.append(a,col);
+ }else row.appendChild(b);
+ lg.appendChild(row);lg.scrollTop=lg.scrollHeight;
+}
+function divider(t){last=null;const d=document.createElement("div");d.className="dv";const lg=$("log");lg.appendChild(d);lg.scrollTop=lg.scrollHeight}
+function sys(t){last=null;const d=document.createElement("div");d.className="sys";d.textContent=t;const lg=$("log");lg.appendChild(d);lg.scrollTop=lg.scrollHeight}
+// 내 메시지: 입력창에 한 글자씩 타자를 친 뒤 보냄
+async function typeMe(t){
+ const ib=$("ib");ib.classList.remove("ph");ib.textContent="";
+ for(const ch of t){ib.textContent+=ch;await sleep(85)}
+ await sleep(600);
+ ib.textContent="메시지 입력";ib.classList.add("ph");
+ add("me",t);
+}
+async function say(lines){
+ for(const t of lines){
+  if(t==="|"){await sleep(1500);continue}
+  if(t==="||"){await sleep(3000);continue}
+  if(t==="="){divider();await sleep(1500);continue}
+  if(t==="-del"){await sleep(1500);const m=document.querySelectorAll(".m.me"),b=m[m.length-1];b.textContent="삭제된 메시지입니다.";b.classList.add("del");await sleep(800);continue}
+  if(t[0]===">"){await sleep(1200);await typeMe(f(t.slice(1)));continue}
+  const lg=$("log"),row=document.createElement("div");row.className="row";
+  row.innerHTML='<div class="sav sp"></div><div class="typing"><i></i><i></i><i></i></div>';
+  lg.appendChild(row);lg.scrollTop=lg.scrollHeight;
+  const q=t[0]==="~";await sleep(q?900+Math.random()*400:2000+Math.random()*1000);row.remove();add("her",f(q?t.slice(1):t));
+ }
+}
+function nxt(){
+ for(const e of EV)if(!e.done&&aff>=e.min){e.done=true;return e.id}
+ const ok=UN.filter(u=>!u.done&&(!u.req||UN.find(x=>x.id===u.req).done)&&(!u.after||drawn>=u.after));
+ if(!ok.length)return "E:end";
+ const u=ok[Math.floor(Math.random()*ok.length)];u.done=true;drawn++;return u.id;
+}
+async function play(id){
+ if(id==="@f")id=FN.n>=2?"s174":"s175";
+ if(id==="@r"||id==="E:score"||(U[id]&&U[id]!==curU))id=nxt();
+ if(U[id])curU=U[id];
+ if(id.startsWith("E:"))return finish(id.slice(2));
+ const s=S[id];
+ if(s.div)divider();if(s.wait)await sleep(s.wait);
+ await say(s.l);
+ if(s.d){aff=Math.max(0,aff+s.d);gauge(s.d)}
+ if(s.f)return free(s);
+ if(!s.c)return play(s.n);
+ const box=$("choices");
+ s.c.forEach(c=>{const b=document.createElement("button");b.textContent=f(c.t);b.onclick=()=>pick(c);box.appendChild(b)});
+ $("log").scrollTop=1e5;
+}
+async function pick(c){
+ $("choices").innerHTML="";
+ if(c.k)FN[c.k]++;
+ if(!c.x)await typeMe(f(c.m||c.t));
+ aff=Math.max(0,aff+c.d);gauge(c.d);
+ await sleep(800);
+ await say(c.r);
+ play(c.n);
+}
+async function confirmDel(){
+ await sleep(1000);
+ const o=document.createElement("div");o.className="ov";
+ o.innerHTML='<div><h2>유솔을 친구 삭제하시겠습니까?</h2><button class="btn" data-k="y" style="text-align:center">예</button><button class="btn" data-k="n" style="text-align:center">아니요</button></div>';
+ o.querySelectorAll("button").forEach(b=>b.onclick=()=>{o.remove();finish(b.dataset.k==="y"?"del":"fade")});
+ app.appendChild(o);
+}
+function notify(list){
+ const box=document.createElement("div");box.className="ntf";app.appendChild(box);
+ list.forEach((t,i)=>setTimeout(()=>{
+  const n=document.createElement("div");n.className="nt";
+  const a=document.createElement("span");a.className="sav";a.textContent="🐰";
+  const w=document.createElement("div"),b=document.createElement("b"),p=document.createElement("p");
+  b.textContent="유솔";p.textContent=t;w.append(b,p);n.append(a,w);box.appendChild(n);
+ },1600*(i+1)));
+}
+async function free(s){
+ const ib=$("ibar");ib.innerHTML='<input id="fi" maxlength="30" placeholder="메시지 입력" autocomplete="off"><button class="send" id="fs">↑</button>';
+ const t=await new Promise(res=>{const g=()=>{const v=$("fi").value.trim();if(v)res(v)};$("fs").onclick=g;$("fi").onkeydown=e=>{if(e.key==="Enter")g()};$("fi").focus()});
+ ib.innerHTML='<div class="ibtxt ph" id="ib">메시지 입력</div><div class="send">↑</div>';
+ add("me",t);await sleep(800);
+ const q=s.f,ok=!q.test||new RegExp(q.test).test(t.replace(/파이팅|떡볶이/g,"")),d=ok?(q.d||0):q.bd;
+ aff=Math.max(0,aff+d);gauge(d);await sleep(500);
+ await say(ok?(q.rand?q.rand[Math.floor(Math.random()*q.rand.length)]:q.r):q.br);
+ play(s.n);
+}
+function lock(msg){const ib=$("ib");ib.classList.remove("ph");ib.textContent=msg;$("ibar").classList.add("off")}
+function overlay(e){
+ const o=document.createElement("div");o.className="ov";
+ o.innerHTML='<div><h2></h2><p></p><p class="sb"></p><button class="btn" style="text-align:center">처음부터 다시하기</button></div>';
+ o.querySelector("h2").textContent=e.sys;o.querySelector("p").textContent=e.no;o.querySelector(".sb").textContent=e.sub||"";
+ o.querySelector("button").onclick=start;app.appendChild(o);
+}
+async function finish(k){
+ if(k==="confirm")return confirmDel();
+ const e=k==="score"||k==="end"?E.score.find(x=>aff>=x.min):E[k];
+ await sleep(900);divider();
+ if(k==="far"){$("log").classList.add("dim");await sleep(4500);lock("대화가 끝났습니다.");overlay(e);return}
+ if(k==="block"){sys("대화할 수 없는 상대입니다.");lock("대화할 수 없는 상대입니다.");await sleep(1200);overlay(e);return}
+ if(k==="del"||k==="del2"){sys("대화할 수 없는 상대입니다.");lock("대화할 수 없는 상대입니다.");await sleep(800);overlay(e);if(k==="del")notify(["저기요?","어디갔어요?","ㅠㅠ..."]);return}
+ sys(e.sys);lock("대화가 끝났습니다.");
+ const d=document.createElement("div");d.className="end";
+ d.innerHTML='<h2></h2><button class="btn" style="text-align:center;width:100%">처음부터 다시하기</button>';
+ d.querySelector("h2").textContent=e.no;
+ d.querySelector("button").onclick=start;
+ const lg=$("log");lg.appendChild(d);lg.scrollTop=lg.scrollHeight;
+}
+start();
+</script>
+</body>
+</html>
